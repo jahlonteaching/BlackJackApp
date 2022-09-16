@@ -1,19 +1,18 @@
 from dataclasses import dataclass, field
 import random
-from typing import Optional
+from typing import Optional, ClassVar
 
-CORAZON = "\u2764\uFE0F"
-TREBOL = "\u2663\uFE0F"
-DIAMANTE = "\u2666\uFE0F"
-ESPADA = "\u2660\uFE0F"
-OCULTA = "\u25AE\uFE0F"
-
-VALORES = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
-PINTAS = [CORAZON, TREBOL, DIAMANTE, ESPADA]
+CORAZON = "\u2764"
+TREBOL = "\u2663"
+DIAMANTE = "\u2666"
+ESPADA = "\u2660"
+OCULTA = "\u25AE"
 
 
 @dataclass
 class Carta:
+    VALORES: ClassVar[list[str]] = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+    PINTAS: ClassVar[list[str]] = [CORAZON, TREBOL, DIAMANTE, ESPADA]
     pinta: str
     valor: str
     _visible: bool = field(init=False, repr=False, default=False)
@@ -39,11 +38,11 @@ class Baraja:
 
     def __init__(self):
         self.cartas = []
-        self.inicializar_cartas()
+        self.recoger_cartas()
 
-    def inicializar_cartas(self):
-        for pinta in PINTAS:
-            for valor in VALORES:
+    def recoger_cartas(self):
+        for pinta in Carta.PINTAS:
+            for valor in Carta.VALORES:
                 self.cartas.append(Carta(pinta, valor))
 
     def revolver(self):

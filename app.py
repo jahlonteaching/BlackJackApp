@@ -5,6 +5,6 @@ if __name__ == "__main__":
     baraja: Baraja = Baraja()
     baraja.revolver()
     while baraja.tiene_cartas():
-        print(baraja.repartir())
+        print(f"{str(baraja.repartir()):^10}")
 
 
