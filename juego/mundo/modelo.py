@@ -48,9 +48,9 @@ class Baraja:
 
     def __init__(self):
         self.cartas = []
-        self.recoger()
+        self.reiniciar()
 
-    def recoger(self):
+    def reiniciar(self):
         for pinta in Carta.PINTAS:
             for valor in Carta.VALORES:
                 self.cartas.append(Carta(pinta, valor))
@@ -135,10 +135,11 @@ class BlackJack:
         self.usuario: Jugador = Jugador(nombre_usuario)
         self.casa: Jugador = Jugador("La Casa")
 
-    def reiniciar(self):
+    def iniciar_nuevo_juego(self):
         self.usuario.mano.limpiar()
         self.casa.mano.limpiar()
-        self.baraja.recoger()
+        self.baraja.reiniciar()
+        self.repartir_manos()
 
     def repartir_manos(self):
         self.baraja.revolver()
@@ -157,21 +158,19 @@ class BlackJack:
     def usuario_perdio(self) -> bool:
         return self.usuario.mano.calcular_valor() > 21
 
-    def casa_perdio(self) -> bool:
+    def la_casa_perdio(self) -> bool:
         return self.casa.mano.calcular_valor() > 21
 
     def la_casa_puede_pedir(self) -> bool:
         valor_mano_casa = self.casa.mano.calcular_valor()
-        return valor_mano_casa <= self.usuario.mano.calcular_valor() and valor_mano_casa <= 21
+        return valor_mano_casa <= self.usuario.mano.calcular_valor() and valor_mano_casa < 21
 
     def destapar_mano_de_la_casa(self):
         for carta in self.casa.mano.cartas:
             carta.mostrar()
 
-    def dar_carta_a_casa(self):
+    def dar_carta_a_la_casa(self):
         self.casa.recibir_carta(self.baraja.repartir())
 
     def usuario_tiene_blackjack(self) -> bool:
         return self.usuario.mano.es_blackjack()
-
-
