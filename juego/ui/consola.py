@@ -43,11 +43,11 @@ class UIConsola:
         self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.usuario.mano)
 
         if not self.blackjack.usuario_tiene_blackjack():
-            self.hacer_jugada_jugador()
+            self.hacer_jugada_del_jugador()
         else:
             print(f"¡¡¡BLACKJACK!!!\n!FELICITACIONES {self.blackjack.usuario.nombre.upper()}! HAS GANADO EL JUEGO\n")
 
-    def hacer_jugada_jugador(self):
+    def hacer_jugada_del_jugador(self):
         while not self.blackjack.usuario_perdio():
             respuesta = input("¿Quieres otra carta? s(si), n(no): ")
             if respuesta == 's':
