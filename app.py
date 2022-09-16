@@ -1,10 +1,6 @@
-from juego.mundo.modelo import Baraja
+from juego.ui.consola import UIConsola
 
 
 if __name__ == "__main__":
-    baraja: Baraja = Baraja()
-    baraja.revolver()
-    while baraja.tiene_cartas():
-        print(f"{str(baraja.repartir()):^10}")
-
-
+    consola = UIConsola()
+    consola.ejecutar_app()
