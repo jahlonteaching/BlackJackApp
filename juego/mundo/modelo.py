@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import random
 from typing import Optional, ClassVar, Union
 
@@ -47,7 +47,7 @@ class Carta:
 class Baraja:
 
     def __init__(self):
-        self.cartas = []
+        self.cartas: list[Carta] = []
         self.reiniciar()
 
     def reiniciar(self):
@@ -58,17 +58,17 @@ class Baraja:
     def revolver(self):
         random.shuffle(self.cartas)
 
+    def tiene_cartas(self) -> bool:
+        return len(self.cartas) > 0
+
     def repartir(self, oculta=False) -> Optional[Carta]:
-        if len(self.cartas) > 0:
+        if self.tiene_cartas():
             carta = self.cartas.pop()
             if oculta:
                 carta.ocultar()
             return carta
         else:
             return None
-
-    def tiene_cartas(self) -> bool:
-        return len(self.cartas) > 0
 
 
 class Mano:
@@ -87,21 +87,25 @@ class Mano:
         else:
             self.cartas.insert(0, carta)
 
-    def calcular_valor(self) -> Union[int, str]:
+    def calcular_valor(self) -> int | str:
 
         for carta in self.cartas:
             if not carta.visible:
                 return "--"
 
-        valor = 0
+        valor_mano = 0
 
         for carta in self.cartas[:-self.cantidad_ases]:
-            valor += carta.calcular_valor()
+            valor_mano += carta.calcular_valor()
 
         for carta in self.cartas[-self.cantidad_ases:]:
-            valor += carta.calcular_valor(valor < 11)
+            as_como_11 = valor_mano < 11
+            valor_mano += carta.calcular_valor(as_como_11)
 
-        return valor
+        return valor_mano
+
+    def __gt__(self, other):
+        return self.calcular_valor() > other.calcular_valor()
 
     def es_blackjack(self):
         if len(self.cartas) > 2:
@@ -118,11 +122,19 @@ class Mano:
         return str_mano
 
 
+@dataclass
 class Jugador:
+    nombre: str
+    fichas: int = field(init=False, default=100)
+    mano: Mano = field(init=False, default=Mano())
 
-    def __init__(self, nombre: str):
-        self.nombre: str = nombre
-        self.mano: Mano = Mano()
+    def recibir_carta(self, carta: Carta):
+        self.mano.agregar_carta(carta)
+
+
+@dataclass
+class Casa:
+    mano: Mano = field(init=False, default=Mano())
 
     def recibir_carta(self, carta: Carta):
         self.mano.agregar_carta(carta)
@@ -132,11 +144,11 @@ class BlackJack:
 
     def __init__(self, nombre_usuario: str):
         self.baraja: Baraja = Baraja()
-        self.usuario: Jugador = Jugador(nombre_usuario)
-        self.casa: Jugador = Jugador("La Casa")
+        self.jugador: Jugador = Jugador(nombre_usuario)
+        self.casa: Casa = Casa()
 
     def iniciar_nuevo_juego(self):
-        self.usuario.mano.limpiar()
+        self.jugador.mano.limpiar()
         self.casa.mano.limpiar()
         self.baraja.reiniciar()
         self.repartir_manos()
@@ -145,25 +157,25 @@ class BlackJack:
         self.baraja.revolver()
 
         # Repartir la mano del usuario
-        self.usuario.recibir_carta(self.baraja.repartir())
-        self.usuario.recibir_carta(self.baraja.repartir())
+        self.jugador.recibir_carta(self.baraja.repartir())
+        self.jugador.recibir_carta(self.baraja.repartir())
 
         # Repartir la mano de la casa
         self.casa.recibir_carta(self.baraja.repartir())
         self.casa.recibir_carta(self.baraja.repartir(oculta=True))
 
     def dar_carta_a_jugador(self):
-        self.usuario.recibir_carta(self.baraja.repartir())
+        self.jugador.recibir_carta(self.baraja.repartir())
 
     def usuario_perdio(self) -> bool:
-        return self.usuario.mano.calcular_valor() > 21
+        return self.jugador.mano.calcular_valor() > 21
 
     def la_casa_perdio(self) -> bool:
         return self.casa.mano.calcular_valor() > 21
 
     def la_casa_puede_pedir(self) -> bool:
         valor_mano_casa = self.casa.mano.calcular_valor()
-        return valor_mano_casa <= self.usuario.mano.calcular_valor() and valor_mano_casa < 21
+        return valor_mano_casa <= self.jugador.mano.calcular_valor() and valor_mano_casa < 16
 
     def destapar_mano_de_la_casa(self):
         for carta in self.casa.mano.cartas:
@@ -173,4 +185,4 @@ class BlackJack:
         self.casa.recibir_carta(self.baraja.repartir())
 
     def usuario_tiene_blackjack(self) -> bool:
-        return self.usuario.mano.es_blackjack()
+        return self.jugador.mano.es_blackjack()

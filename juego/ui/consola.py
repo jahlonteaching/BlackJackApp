@@ -40,19 +40,19 @@ class UIConsola:
 
     def iniciar_nuevo_juego(self):
         self.blackjack.iniciar_nuevo_juego()
-        self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.usuario.mano)
+        self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.jugador.mano)
 
         if not self.blackjack.usuario_tiene_blackjack():
             self.hacer_jugada_del_jugador()
         else:
-            print(f"¡¡¡BLACKJACK!!!\n!FELICITACIONES {self.blackjack.usuario.nombre.upper()}! HAS GANADO EL JUEGO\n")
+            print(f"¡¡¡BLACKJACK!!!\n!FELICITACIONES {self.blackjack.jugador.nombre.upper()}! HAS GANADO EL JUEGO\n")
 
     def hacer_jugada_del_jugador(self):
         while not self.blackjack.usuario_perdio():
             respuesta = input("¿Quieres otra carta? s(si), n(no): ")
             if respuesta == 's':
                 self.blackjack.dar_carta_a_jugador()
-                self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.usuario.mano)
+                self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.jugador.mano)
             elif respuesta == 'n':
                 break
 
@@ -64,7 +64,7 @@ class UIConsola:
     def ejecutar_turno_de_la_casa(self):
         print("\nAHORA ES EL TURNO DE LA CASA\n")
         self.blackjack.destapar_mano_de_la_casa()
-        self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.usuario.mano)
+        self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.jugador.mano)
 
         time.sleep(3)
 
@@ -72,7 +72,7 @@ class UIConsola:
             print("\nLA CASA PIDE UNA CARTA\n")
             time.sleep(1)
             self.blackjack.dar_carta_a_la_casa()
-            self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.usuario.mano)
+            self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.jugador.mano)
             time.sleep(2.5)
 
         print("\nLA CASA TERMINA SU JUGADA\n")
@@ -80,12 +80,12 @@ class UIConsola:
 
         print(f"{' RESULTADO ':-^20}")
         if self.blackjack.la_casa_perdio():
-            print(f"\n¡FELICITACIONES {self.blackjack.usuario.nombre.upper()}! HAS GANADO EL JUEGO\n")
+            print(f"\n¡FELICITACIONES {self.blackjack.jugador.nombre.upper()}! HAS GANADO EL JUEGO\n")
         else:
-            if self.blackjack.casa.mano.calcular_valor() > self.blackjack.usuario.mano.calcular_valor():
+            if self.blackjack.casa.mano > self.blackjack.jugador.mano:
                 print("\nLO SENTIMOS, ¡LA CASA GANA!\n")
             else:
-                print(f"\n¡FELICITACIONES {self.blackjack.usuario.nombre.upper()}! HAS GANADO EL JUEGO\n")
+                print(f"\n¡FELICITACIONES {self.blackjack.jugador.nombre.upper()}! HAS GANADO EL JUEGO\n")
 
     @staticmethod
     def mostrar_manos(mano_casa, mano_jugador):
