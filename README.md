@@ -151,3 +151,9 @@ El jugador solo podrá jugar mientras tenga fichas disponibles para apostar.
 ### Versión 1 del modelo del diseño de la solución
 
 ![La versión inicial del modelo del diseño de la solución](assets/images/modelo_2.png "Versión inicial del diseño de la solución")
+
+Luego de iterar sobre el modelo del diseño de la solución, se llegó a la siguiente versión:
+
+### Versión 2 del modelo del diseño de la solución
+
+![La versión final del modelo del diseño de la solución](assets/images/modelo_3.png "Versión final del diseño de la solución")
