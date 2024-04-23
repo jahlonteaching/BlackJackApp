@@ -1,6 +1,5 @@
 import sys
 import time
-from typing import Optional
 
 from juego.mundo.modelo import BlackJack
 
@@ -8,7 +7,7 @@ from juego.mundo.modelo import BlackJack
 class UIConsola:
 
     def __init__(self):
-        self.blackjack: Optional[BlackJack] = None
+        self.blackjack: BlackJack | None = None
         self.opciones = {
             "1": self.iniciar_nuevo_juego,
             "0": self.salir
@@ -38,14 +37,33 @@ class UIConsola:
         nombre: str = input("¿Cuál es tu nombre?: ")
         self.blackjack = BlackJack(nombre_usuario=nombre)
 
+    def recibir_apuesta_jugador(self):
+        while True:
+            apuesta = input("¿Cuántas fichas deseas apostar?: ")
+            if apuesta.isdigit():
+                apuesta = int(apuesta)
+                if self.blackjack.jugador.tiene_fichas(apuesta):
+                    return apuesta
+                else:
+                    print("No tienes suficientes fichas para realizar esa apuesta")
+            else:
+                print("Por favor ingresa un valor numérico")
+
     def iniciar_nuevo_juego(self):
-        self.blackjack.iniciar_nuevo_juego()
+        if self.blackjack.jugador.fichas == 0:
+            print("¡LO SENTIMOS! NO TIENES FICHAS PARA JUGAR")
+            return
+
+        apuesta: int = self.recibir_apuesta_jugador()
+        self.blackjack.iniciar_nuevo_juego(apuesta)
         self.mostrar_manos(self.blackjack.casa.mano, self.blackjack.jugador.mano)
 
         if not self.blackjack.usuario_tiene_blackjack():
             self.hacer_jugada_del_jugador()
         else:
+            fichas_jugador = self.blackjack.finalizar_juego()
             print(f"¡¡¡BLACKJACK!!!\n!FELICITACIONES {self.blackjack.jugador.nombre.upper()}! HAS GANADO EL JUEGO\n")
+            print(f"AHORA TIENES {fichas_jugador} FICHAS")
 
     def hacer_jugada_del_jugador(self):
         while not self.blackjack.usuario_perdio():
@@ -58,6 +76,8 @@ class UIConsola:
 
         if self.blackjack.usuario_perdio():
             print("\nHAS PERDIDO EL JUEGO\n")
+            fichas_jugador = self.blackjack.finalizar_juego(ganador=False)
+            print(f"AHORA TIENES {fichas_jugador} FICHAS")
         else:
             self.ejecutar_turno_de_la_casa()
 
@@ -79,13 +99,18 @@ class UIConsola:
         time.sleep(1)
 
         print(f"{' RESULTADO ':-^20}")
+        ganador = True
         if self.blackjack.la_casa_perdio():
             print(f"\n¡FELICITACIONES {self.blackjack.jugador.nombre.upper()}! HAS GANADO EL JUEGO\n")
         else:
             if self.blackjack.casa.mano > self.blackjack.jugador.mano:
                 print("\nLO SENTIMOS, ¡LA CASA GANA!\n")
+                ganador = False
             else:
                 print(f"\n¡FELICITACIONES {self.blackjack.jugador.nombre.upper()}! HAS GANADO EL JUEGO\n")
+
+        fichas_jugador = self.blackjack.finalizar_juego(ganador)
+        print(f"AHORA TIENES {fichas_jugador} FICHAS")
 
     @staticmethod
     def mostrar_manos(mano_casa, mano_jugador):

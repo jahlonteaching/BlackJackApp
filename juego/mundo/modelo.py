@@ -1,6 +1,7 @@
-from dataclasses import dataclass, field
 import random
-from typing import Optional, ClassVar, Union
+
+from typing import ClassVar
+from dataclasses import dataclass, field
 
 CORAZON = "\u2764\uFE0F"
 TREBOL = "\u2663\uFE0F"
@@ -61,7 +62,7 @@ class Baraja:
     def tiene_cartas(self) -> bool:
         return len(self.cartas) > 0
 
-    def repartir(self, oculta=False) -> Optional[Carta]:
+    def repartir(self, oculta=False) -> Carta | None:
         if self.tiene_cartas():
             carta = self.cartas.pop()
             if oculta:
@@ -104,15 +105,15 @@ class Mano:
 
         return valor_mano
 
-    def __gt__(self, other):
-        return self.calcular_valor() > other.calcular_valor()
-
-    def es_blackjack(self):
+    def es_blackjack(self) -> bool:
         if len(self.cartas) > 2:
             return False
         else:
             return self.cartas[0].valor == "A" and self.cartas[1].valor in ["J", "Q", "K"] \
                    or self.cartas[1].valor == "A" and self.cartas[0].valor in ["J", "Q", "K"]
+
+    def __gt__(self, other) -> bool:
+        return self.calcular_valor() > other.calcular_valor()
 
     def __str__(self) -> str:
         str_mano = ""
@@ -131,6 +132,12 @@ class Jugador:
     def recibir_carta(self, carta: Carta):
         self.mano.agregar_carta(carta)
 
+    def agregar_fichas(self, fichas: int):
+        self.fichas += fichas
+
+    def tiene_fichas(self, apuesta: int) -> bool:
+        return self.fichas >= apuesta
+
 
 @dataclass
 class Casa:
@@ -143,11 +150,13 @@ class Casa:
 class BlackJack:
 
     def __init__(self, nombre_usuario: str):
+        self.apuesta_actual: int = 0
         self.baraja: Baraja = Baraja()
         self.jugador: Jugador = Jugador(nombre_usuario)
         self.casa: Casa = Casa()
 
-    def iniciar_nuevo_juego(self):
+    def iniciar_nuevo_juego(self, apuesta: int):
+        self.apuesta_actual = apuesta
         self.jugador.mano.limpiar()
         self.casa.mano.limpiar()
         self.baraja.reiniciar()
@@ -171,7 +180,11 @@ class BlackJack:
         return self.jugador.mano.calcular_valor() > 21
 
     def la_casa_perdio(self) -> bool:
-        return self.casa.mano.calcular_valor() > 21
+        valor = self.casa.mano.calcular_valor()
+        if type(valor) is int:
+            return valor > 21
+        else:
+            return False
 
     def la_casa_puede_pedir(self) -> bool:
         valor_mano_casa = self.casa.mano.calcular_valor()
@@ -186,3 +199,11 @@ class BlackJack:
 
     def usuario_tiene_blackjack(self) -> bool:
         return self.jugador.mano.es_blackjack()
+
+    def finalizar_juego(self, ganador=True) -> int:
+        if ganador:
+            self.jugador.agregar_fichas(self.apuesta_actual)
+        else:
+            self.jugador.agregar_fichas(-self.apuesta_actual)
+
+        return self.jugador.fichas
