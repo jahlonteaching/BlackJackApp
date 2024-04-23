@@ -157,3 +157,6 @@ Luego de iterar sobre el modelo del diseño de la solución, se llegó a la sigu
 ### Versión 2 del modelo del diseño de la solución
 
 ![La versión final del modelo del diseño de la solución](assets/images/modelo_3.png "Versión final del diseño de la solución")
+
+Tu tarea es implementar el modelo del diseño de la solución en Python. Para ello, debes tener en cuenta lo siguiente:
+
