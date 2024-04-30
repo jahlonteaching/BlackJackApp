@@ -76,10 +76,11 @@ class Mano:
 
     def __init__(self):
         self.cartas: list[Carta] = []
-        self.cantidad_ases = 0
+        self.cantidad_ases: int = 0
 
     def limpiar(self):
         self.cartas.clear()
+        self.cantidad_ases = 0
 
     def agregar_carta(self, carta: Carta):
         if carta.valor == "A":
@@ -109,8 +110,8 @@ class Mano:
         if len(self.cartas) > 2:
             return False
         else:
-            return self.cartas[0].valor == "A" and self.cartas[1].valor in ["J", "Q", "K"] \
-                   or self.cartas[1].valor == "A" and self.cartas[0].valor in ["J", "Q", "K"]
+            return self.cartas[0].valor == "A" and self.cartas[1].valor in ["10", "J", "Q", "K"] \
+                   or self.cartas[1].valor == "A" and self.cartas[0].valor in ["10", "J", "Q", "K"]
 
     def __gt__(self, other) -> bool:
         return self.calcular_valor() > other.calcular_valor()
