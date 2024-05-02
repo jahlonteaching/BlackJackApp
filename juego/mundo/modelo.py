@@ -52,6 +52,7 @@ class Baraja:
         self.reiniciar()
 
     def reiniciar(self):
+        self.cartas.clear()
         for pinta in Carta.PINTAS:
             for valor in Carta.VALORES:
                 self.cartas.append(Carta(pinta, valor))
