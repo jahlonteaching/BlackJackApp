@@ -139,3 +139,6 @@ dmypy.json
 cython_debug/
 
 .idea
+tests/results
+juego/submissions/*.py
+.pytest_cache
