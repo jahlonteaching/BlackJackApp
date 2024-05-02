@@ -183,7 +183,7 @@ Tu tarea es implementar el modelo del diseño de la solución en Python. Para el
     - La clase **NO** se debe implementar como una `dataclass`
     - El atributo de instancia `cartas` se debe inicializar como una lista vacía
     - Al final del cuerpo del método inicializados se debe invocar el método `reiniciar`
-    - El método `reiniciar` debe llenar la baraja con las 52 cartas de una baraja de blackjack. Para esto, debes
+    - El método `reiniciar` debe limpiar la lista de cartas y luego la debe llenar con las 52 cartas de una baraja de blackjack. Para esto, debes
     recorrer las constantes `VALORES` y `PINTAS` de la clase `Carta` y crear una carta por cada combinación 
     de valor y pinta. Cada carta debe ser agregada a la lista `cartas`.
     - El método `revolver` debe cambiar el orden de las cartas de la baraja (puedes utilizar la función `shuffle` del 
